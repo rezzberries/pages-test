@@ -9,6 +9,8 @@
     --color-javadoc-blue: #4D7A97;
     --color-javadoc-text: #4A6782;
     --color-javadoc-orange: #F8981D;
+    --color-javadoc-header-grey: #dee3e9;
+    --color-javadoc-content-grey: #EEEEEF;
 }
 
 .page-alignment {
@@ -84,10 +86,41 @@ header nav a {
 
 #docs-list {
     display: grid;
+    gap: var(--gap-large);
+    grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+    grid-auto-rows: 300px;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.project-title {
+    background-color: var(--color-javadoc-header-grey);
+    padding: var(--gap-small);
+    box-sizing: border-box;
+}
+
+.versions-list {
+    background-color: var(--color-javadoc-content-grey);
+    padding: var(--gap-small) 0 var(--gap-small);
+    box-sizing: border-box;
+    flex: 1;
+    overflow: auto;
 }
 
 .versions-list a {
     color: var(--color-javadoc-text);
+}
+
+.versions-list ul {
+    padding: 0 var(--gap-small);
+    list-style: none;
+}
+
+.versions-list li:not(:first-child) {
+    margin-top: 10px;
 }
 
 .versions-list li:first-child {
@@ -110,4 +143,10 @@ header nav a {
 
 footer p {
     font-size: 12px;
+}
+
+#footer-content {
+    padding: var(--gap-small);
+    min-height: var(--gap-large);
+    background-color: var(--color-javadoc-content-grey);
 }

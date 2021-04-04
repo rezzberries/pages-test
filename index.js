@@ -62,7 +62,7 @@ async function gatherAvailableVersions(dir)
 
     for (let version of versionDirContents)
     {
-        versionsList.unshift(`<li><a href="${version.path}"><span class="monospace">${version.name}</span></a></li>`)
+        versionsList.unshift(`<li><a href="${version.path}" target="_blank"><span class="monospace">${version.name}</span></a></li>`)
     }
 
     return versionsList.join("");
