@@ -139,7 +139,9 @@ async function loadJavadocsList()
     }
 
     console.log("Fetching javadocs list...")
-    displayJavadocsList(requestThenCacheJavadocs().docs);
+
+    let fetched = await requestThenCacheJavadocs();
+    displayJavadocsList(fetched.docs);
 }
 
 function index()
