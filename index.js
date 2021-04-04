@@ -9,6 +9,12 @@ const project =
     }
 };
 
+let loadStatus =
+{
+    start: Date.now(),
+    message: "Loaded from cache in "
+};
+
 function getQueryByName(name, url = window.location.search)
 {
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -110,6 +116,7 @@ async function requestThenCacheJavadocs()
     };
     
     window.localStorage.setItem("javadocsListCache", JSON.stringify(cached));
+    loadStatus.message = "Loaded fresh from the API in ";
     return cached;
 }
 
@@ -117,6 +124,7 @@ function displayJavadocsList(docsList)
 {
     document.getElementById("docs-list").innerHTML = docsList.map(docs => docs.html).join("");
     document.getElementById("loading-display").classList.add("hidden");
+    document.getElementById("load-status").innerText = `${loadStatus.message} ${Date.now() - loadStatus.start} ms.`;
 }
 
 async function loadJavadocsList()
@@ -155,6 +163,8 @@ function index()
 
         showErrorByQuery();
         loadJavadocsList();
+
+        document.getElementById("copyright").innerText = `Copyright © RezzedUp ${new Date().getFullYear()}.`;
     }
 
     document.onreadystatechange = event =>

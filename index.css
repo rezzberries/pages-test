@@ -66,12 +66,15 @@ header nav a {
     color: #fff;
 }
 
+#content > :not(:last-child) {
+    margin: 0 0 var(--gap-large);
+}
+
 #error-display {
     box-sizing: border-box;
     border: var(--gap-small);
     border-color: var(--color-javadoc-orange);
     border-style: solid;
-    margin: 0 0 var(--gap-large);
     padding: var(--gap-small);
 }
 
@@ -98,4 +101,13 @@ header nav a {
     color: #fff;
     margin-left: 10px;
     padding: 3px;
+}
+
+#footer-bar {
+    background-color: var(--color-javadoc-blue);
+    padding: var(--gap-small);
+}
+
+footer p {
+    font-size: 12px;
 }
