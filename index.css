@@ -1,9 +1,8 @@
 * {
     margin: 0;
     font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
-}
-
-html {
+    
+    /* Vars */
     --maxWidth: 1400px;
     --gap-small: 1rem;
     --gap-large: 3rem;

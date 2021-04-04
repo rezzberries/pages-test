@@ -1,12 +1,12 @@
-document.onreadystatechange = event =>
+const project = 
 {
-    if (event.target.readyState !== "interactive") { return; }
-
-    document.title = project.name + " / Javadocs";
-    document.querySelector("#header-text h1 .bold").innerText = project.name;
-    document.querySelector("#github-link").href = project.github;
-    showErrorByQuery();
-}
+    name: "Pages Test",
+    github: 
+    {
+        user: "rezzberries",
+        repo: "pages-test"
+    }
+};
 
 function getQueryByName(name, url = window.location.search)
 {
@@ -18,6 +18,17 @@ function getQueryByName(name, url = window.location.search)
     if (!results[2]) { return ""; }
 
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function redirect404()
+{
+    if (getQueryByName("redirected")) { return; }
+
+    let redirect = `/?redirected&error=404#${window.location.pathname}`;
+    if (window.location.hostname.includes("github.io")) { redirect = `/${project.github.repo}${redirect}`; }
+
+    console.log(`404. Redirecting to: ${redirect}`);
+    window.location.href = redirect;
 }
 
 function showErrorByQuery()
@@ -36,4 +47,22 @@ function showErrorByQuery()
     }
 
     errorDisplay.innerHTML = html;
+}
+
+function index()
+{
+    const init = () =>
+    {
+        document.title = project.name + " / Javadocs";
+
+        document.querySelector("#header-text h1 .bold").innerText = project.name;
+        document.querySelector("#github-link").href = `https://github.com/${project.github.user}/${project.github.repo}`;
+        
+        showErrorByQuery();
+    }
+
+    document.onreadystatechange = event =>
+    {
+        if (event.target.readyState === "interactive") { init(); }
+    }
 }
