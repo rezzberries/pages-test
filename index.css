@@ -7,6 +7,7 @@
     --gap-small: 1rem;
     --gap-large: 3rem;
     --color-javadoc-blue: #4D7A97;
+    --color-javadoc-text: #4A6782;
     --color-javadoc-orange: #F8981D;
 }
 
@@ -26,6 +27,11 @@
 
 .bold {
     font-weight: bolder;
+}
+
+a:hover {
+    text-decoration: none;
+    opacity: 75%;
 }
 
 header {
@@ -60,11 +66,6 @@ header nav a {
     color: #fff;
 }
 
-header nav a:hover {
-    text-decoration: none;
-    opacity: 75%;
-}
-
 #error-display {
     box-sizing: border-box;
     border: var(--gap-small);
@@ -76,4 +77,25 @@ header nav a:hover {
 
 #error-display > h1 {
     display: inline-block;
+}
+
+#docs-list {
+    display: grid;
+}
+
+.versions-list a {
+    color: var(--color-javadoc-text);
+}
+
+.versions-list li:first-child {
+    font-weight: bolder;
+}
+
+.versions-list li:first-child::after {
+    content: "< Latest";
+    font-size: 8pt;
+    background-color: var(--color-javadoc-orange);
+    color: #fff;
+    margin-left: 10px;
+    padding: 3px;
 }

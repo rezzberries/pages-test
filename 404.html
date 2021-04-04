@@ -4,19 +4,22 @@
         <meta charset="UTF-8">
         <script>
             const hostnames = 
-            {
-                "github.io": () => /^\/([^/]+)/.exec(window.location.pathname)[1]
-            };
+            [
+                {
+                    hostname: "github.io",
+                    relative: () => /^\/([^/]+)/.exec(window.location.pathname)[1]
+                }
+            ];
 
             if (!window.location.search.includes("redirected"))
             {
                 let redirect = `/?redirected&error=404#${window.location.pathname}`;
 
-                for (let name in hostnames)
+                for (let site of hostnames)
                 {
-                    if (window.location.hostname.includes(name))
+                    if (window.location.hostname.includes(site.hostname))
                     {
-                        redirect = `/${hostnames[name]()}${redirect}`;
+                        redirect = `/${site.relative()}${redirect}`;
                         break;
                     }
                 }

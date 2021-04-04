@@ -39,10 +39,63 @@ function showErrorByQuery()
     errorDisplay.innerHTML = html;
 }
 
+function getContentsApiUrl(path)
+{
+    return `https://api.github.com/repos/${project.github.user}/${project.github.repo}/contents/${path}/?ref=${project.github.branch}`
+}
+
+async function gatherAvailableVersions(dir)
+{
+    let versionsRequest = await fetch(getContentsApiUrl(`javadocs/${dir}`));
+    let versionDirContents = await versionsRequest.json();
+
+    let versionsList = [];
+
+    for (let version of versionDirContents)
+    {
+        versionsList.unshift(`<li><a href="${version.path}"><span class="monospace">${version.name}</span></a></li>`)
+    }
+
+    return versionsList.join("");
+}
+
 async function loadJavadocsList()
 {
-    const javadocsApiUrl = `https://api.github.com/repos/${project.github.user}/${project.github.repo}/contents/javadocs/`;
-    let result = await fetch(javadocsApiUrl);
+    let javadocsRequest = await fetch(getContentsApiUrl("javadocs"));
+    let javadocsDirContents = await javadocsRequest.json();
+
+    let docsList = [];
+    let pendingRequests = [];
+
+    for (let dir of javadocsDirContents)
+    {
+        if (dir.type !== "dir") { continue; }
+
+        let pending = gatherAvailableVersions(dir.name)
+            .then(availableVersions => 
+            {
+                let html =
+                    `<div class="project-card">
+                        <div class="project-title">
+                            <h2>${dir.name}</h2>
+                        </div>
+                        <div class="versions-list">
+                            <ul>${availableVersions}</ul>
+                        </div>
+                    </div>`;
+                
+                docsList.push({name: dir.name, html: html});
+            });
+
+        pendingRequests.push(pending);
+    }
+
+    await Promise.all(pendingRequests);
+
+    docsList.sort((a, b) => a.name.localeCompare(b.name));
+    
+    document.getElementById("docs-list").innerHTML = docsList.map(docs => docs.html).join("");
+    document.getElementById("loading-display").classList.add("hidden");
 }
 
 function index()
