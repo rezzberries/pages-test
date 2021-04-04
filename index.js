@@ -20,17 +20,6 @@ function getQueryByName(name, url = window.location.search)
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function redirect404()
-{
-    if (getQueryByName("redirected")) { return; }
-
-    let redirect = `/?redirected&error=404#${window.location.pathname}`;
-    if (window.location.hostname.includes("github.io")) { redirect = `/${project.github.repo}${redirect}`; }
-
-    console.log(`404. Redirecting to: ${redirect}`);
-    window.location.href = redirect;
-}
-
 function showErrorByQuery()
 {
     let error = getQueryByName("error");
@@ -57,7 +46,7 @@ function index()
 
         document.querySelector("#header-text h1 .bold").innerText = project.name;
         document.querySelector("#github-link").href = `https://github.com/${project.github.user}/${project.github.repo}`;
-        
+
         showErrorByQuery();
     }
 
