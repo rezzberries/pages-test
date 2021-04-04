@@ -4,7 +4,8 @@ const project =
     github: 
     {
         user: "rezzberries",
-        repo: "pages-test"
+        repo: "pages-test",
+        branch: "master"
     }
 };
 
@@ -38,6 +39,12 @@ function showErrorByQuery()
     errorDisplay.innerHTML = html;
 }
 
+async function loadJavadocsList()
+{
+    const javadocsApiUrl = `https://api.github.com/repos/${project.github.user}/${project.github.repo}/contents/javadocs/`;
+    let result = await fetch(javadocsApiUrl);
+}
+
 function index()
 {
     const init = () =>
@@ -48,6 +55,7 @@ function index()
         document.querySelector("#github-link").href = `https://github.com/${project.github.user}/${project.github.repo}`;
 
         showErrorByQuery();
+        loadJavadocsList();
     }
 
     document.onreadystatechange = event =>
