@@ -21,22 +21,25 @@ function getQueryByName(name, url = window.location.search)
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function showError(errorCode, html)
+{
+    let errorDisplay = document.getElementById("error-display");
+    errorDisplay.classList.remove("hidden");
+    errorDisplay.innerHTML = `<h1>${errorCode}</h1>${html || ""}`;
+}
+
 function showErrorByQuery()
 {
     let error = getQueryByName("error");
-    if (!error) { return; }
-
-    let errorDisplay = document.getElementById("error-display");
-    errorDisplay.classList.remove("hidden");
-
-    let html = `<h1>${error}</h1>`;
 
     if (error === "404")
     {
-        html += `<p>Unknown Page: <span class="monospace">${window.location.hostname + window.location.hash.replace(/^#/, "")}</span></p>`;
+        showError(error, `<p>Unknown Page: <span class="monospace">${window.location.hostname + window.location.hash.replace(/^#/, "")}</span></p>`);
     }
-
-    errorDisplay.innerHTML = html;
+    else if (error)
+    { 
+        showError(error); 
+    }
 }
 
 function getContentsApiUrl(path)
@@ -59,9 +62,17 @@ async function gatherAvailableVersions(dir)
     return versionsList.join("");
 }
 
-async function loadJavadocsList()
+async function requestThenCacheJavadocs()
 {
     let javadocsRequest = await fetch(getContentsApiUrl("javadocs"));
+
+    if (javadocsRequest.status !== 200)
+    {
+        console.error(javadocsRequest);
+        let statusText = (javadocsRequest.status === 403) ? "Forbidden (likely ratelimited - check back later)" : javadocsRequest.statusText;
+        showError(javadocsRequest.status, `<p>${statusText}</p>`);
+    }
+
     let javadocsDirContents = await javadocsRequest.json();
 
     let docsList = [];
@@ -92,10 +103,43 @@ async function loadJavadocsList()
 
     await Promise.all(pendingRequests);
 
-    docsList.sort((a, b) => a.name.localeCompare(b.name));
+    let cached =
+    {
+        timestamp: Date.now(),
+        docs: docsList.sort((a, b) => a.name.localeCompare(b.name))
+    };
     
+    window.localStorage.setItem("javadocsListCache", JSON.stringify(cached));
+    return cached;
+}
+
+function displayJavadocsList(docsList)
+{
     document.getElementById("docs-list").innerHTML = docsList.map(docs => docs.html).join("");
     document.getElementById("loading-display").classList.add("hidden");
+}
+
+async function loadJavadocsList()
+{
+    let existing = window.localStorage.getItem("javadocsListCache");
+
+    if (existing)
+    {
+        let cached = JSON.parse(existing);
+        let millis = Date.now() - cached.timestamp;
+
+        if (millis < 7200000) // valid for 2 hours
+        {
+            console.log("Using cached javadocs list.")
+            displayJavadocsList(cached.docs);
+            return;
+        }
+
+        console.log("Cached javadocs list has expired.")
+    }
+
+    console.log("Fetching javadocs list...")
+    displayJavadocsList(requestThenCacheJavadocs().docs);
 }
 
 function index()
